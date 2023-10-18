@@ -446,5 +446,10 @@ sys_pipe(void)
 // TP1
 int sys_lseek(void)
 {
-  return 0;
+  struct file *f;
+  int offset, whence;
+
+  if(argfd(0, 0, &f) < 0 || argint(1, &offset) < 0 || argint(2, &whence) < 0)
+    return -1;
+  return filelseek(f, offset, whence);
 }
