@@ -33,6 +33,8 @@ void            fileinit(void);
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
+//TP1
+int             filelseek(struct file*, int, int);
 
 // fs.c
 void            readsb(int dev, struct superblock *sb);
@@ -188,3 +190,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+
+// TP2 : drvmem.c
+void            drvmeminit();

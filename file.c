@@ -10,6 +10,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "stat.h"
 
 
 struct devsw devsw[NDEV];
@@ -157,28 +158,37 @@ filewrite(struct file *f, char *addr, int n)
   panic("filewrite");
 }
 
+//TP1
 int filelseek(struct file *f, int offset, int whence)
 {
-  int newoff = -1;
-  if (whence == SEEK_CUR)
+  if(f->type == FD_PIPE)
+    return -1;
+
+  uint newoff;
+
+  switch (whence)
   {
-    newoff = f->ip->inum + offset;
-  }
-  else if (whence == SEEK_SET)
-  {
+  case SEEK_SET:
     newoff = offset;
-  }
-  else if (whence == SEEK_END)
-  {
-    newoff = f->ip->size + offset; 
-  }
-  else
-  {
-    panic("filelseek");
+    break;
+  
+  case SEEK_CUR:
+    newoff = f->off + offset;
+    break;
+  
+  default:
+  return -1;
+    break;
   }
 
-  if (newoff < 0 || newoff > f->ip->size)
+  if (f->ip->type == T_DEV)
+    f->off = newoff;
+
+  else if (newoff >= f->ip->size)
     return -1;
-  
-  return 0;
+
+  else
+      f->off = newoff;
+
+  return f->off;
 }
